@@ -1,4 +1,4 @@
 [submodule "src/be-common"]
 	path = src/be-common
 	url = ssh://git@10.12.0.79:222/gaia-ui/be-common.git
-	branch = 1.0.0
+	branch = 1.1.0
