@@ -3,10 +3,15 @@ import { getCurrentUser, getVerifyConfig } from '@service/common';
 import { message } from 'antd';
 import favicon from '@assets/image/favicon.png';
 import { history } from '@utils/umi';
-import { isInWhiteList } from '@utils/utils';
+import { isInWhiteList, onTokenInvalid } from '@utils/utils';
 
 async function initTenantInfo() {
-  const { data } = await getVerifyConfig();
+  let data;
+  try {
+    const res = await getVerifyConfig();
+    data = res.data;
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
   if (!data) {
     message.error('获取系统配置失败');
     return;
@@ -46,17 +51,29 @@ async function initTenantInfo() {
   );
 }
 
+export type IInitialState = {
+  settings: typeof defaultSettings;
+  currentUser?: any;
+};
+
+export async function getUserInfo(): Promise<any> {
+  let res = null;
+  try {
+    res = await getCurrentUser();
+  } catch (e) {
+    onTokenInvalid();
+  }
+  return res;
+}
+
 /**
  * 页面初始化执行
  */
-export async function getInitialState(): Promise<{
-  settings?: typeof defaultSettings;
-  currentUser?: any;
-}> {
+export async function getInitialState(): Promise<IInitialState> {
   await initTenantInfo();
   const { pathname } = history.location;
   if (!isInWhiteList(pathname)) {
-    const currentUser = await getCurrentUser();
+    const currentUser = await getUserInfo();
     return {
       settings: defaultSettings,
       currentUser,

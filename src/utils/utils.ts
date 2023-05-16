@@ -1,4 +1,3 @@
-import { removeSession, removeStorage } from '@/be-common/src/utils';
 import { KEY_TOKEN, KEY_TOKEN_TYPE, THEME_LIST } from '@common/constant';
 import { Base64 } from 'js-base64';
 import Cookie from 'js-cookie';
@@ -36,9 +35,18 @@ export const getToken = (): string => {
 // 权限失效的动作，在这里修改
 export const onTokenInvalid = (needClear = true) => {
   if (needClear) {
-    removeStorage('userId');
-    removeSession('user');
     Cookie.remove(KEY_TOKEN);
     Cookie.remove(KEY_TOKEN_TYPE);
   }
+  // and then go to login add your custom code here
+};
+
+type IToken = {
+  token: string;
+  type: string;
+};
+
+export const setCookieToken = ({ token, type }: IToken) => {
+  Cookie.set(KEY_TOKEN, token);
+  Cookie.set(KEY_TOKEN_TYPE, type);
 };

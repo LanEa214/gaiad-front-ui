@@ -1,9 +1,16 @@
 // 全局状态
+import type { IInitialState } from '@config/initialState';
 import React, { useContext } from 'react';
 
-export const GlobalContext = React.createContext<any>(null);
+export type IGlobalState = {
+  initialState: IInitialState;
+  clearUserInfo: () => void;
+  getCurrentUser: () => Promise<void>;
+};
 
-export default function useGlobalState() {
-  const global = useContext(GlobalContext);
+export const GlobalContext = React.createContext<IGlobalState | null>(null);
+
+export default function useGlobalState(): IGlobalState {
+  const global = useContext(GlobalContext) as IGlobalState;
   return global;
 }
