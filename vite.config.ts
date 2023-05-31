@@ -49,6 +49,7 @@ export default defineConfig(({ mode }) => {
     build: {
       reportCompressedSize: false,
       target: 'es2015',
+      manifest: true,
       rollupOptions: {
         output: {
           manualChunks: {
