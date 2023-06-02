@@ -1,7 +1,13 @@
-import useGlobalState from '@hook/globalState';
-import access from '@/access';
+import { useContext } from 'react';
+
+import type accessFactory from '@/access';
+import { createContext } from 'react';
+
+type ContextType = ReturnType<typeof accessFactory>;
+
+export const AccessContext = createContext<ContextType | null>(null);
 
 export default function useAccess() {
-  const { initialState } = useGlobalState();
-  return access(initialState);
+  const access = useContext(AccessContext);
+  return access;
 }

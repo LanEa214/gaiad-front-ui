@@ -7,6 +7,8 @@ import { PageLoading } from '@ant-design/pro-components';
 import routesConfig from '@/routes';
 
 import defaulSetting from '@config/defaultSettings';
+import ExceptionContainer from '@components/ExceptionContainer';
+import { useAccessMarkedRoutes } from '@hook/useAccessMarkedRoutes';
 
 /**
  * 处理路由数据 => Routes，将数据处理成对应的`Route`，但不是跟数据一样嵌套的，这边节点是打平的，
@@ -38,7 +40,7 @@ function generateRoute(routeData: MenuDataItem[], cacheRoutes: any[] = []) {
           key={`route-${route.path}`}
           // 兼容ProLayout 菜单active匹配与router@v6 nest routes
           path={route.path + (isNestRoutes ? '/*' : '')}
-          element={<Component />}
+          element={<ExceptionContainer element={<Component />} />}
         />,
       );
     }
@@ -50,9 +52,10 @@ function generateRoute(routeData: MenuDataItem[], cacheRoutes: any[] = []) {
 const App = function App() {
   const location = useLocation();
   const nestedRoutes = useMemo(() => generateRoute(routesConfig), []);
+  const realRoutes = useAccessMarkedRoutes(routesConfig);
   return (
     <ProLayout
-      route={{ routes: routesConfig }}
+      route={{ routes: realRoutes }}
       location={location}
       logo={null}
       collapsedButtonRender={false}
