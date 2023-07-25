@@ -160,6 +160,12 @@ Install `node_modules`: 推荐使用 `yarn`
 ```bash
 yarn install
 ```
+```js
+// 更新子模块
+git submodule init
+git submodule sync
+git submodule update
+```js
 
 ### Start project
 
