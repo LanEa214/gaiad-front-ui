@@ -22,7 +22,7 @@ export const useAccessMarkedRoutes = (routes: IRoute[]) => {
 
       // check access code
       if (typeof accessCode === 'string') {
-        const detector = access[accessCode];
+        const detector = access?.codes?.has(accessCode);
 
         if (typeof detector === 'function') {
           route.unaccessible = !detector(detectorRoute);

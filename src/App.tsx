@@ -4,8 +4,8 @@ import useGlobalState from '@hook/globalState';
 import { CustomHashRouter } from '@utils/customRouter';
 
 const App = () => {
-  const state = useGlobalState();
-  return <CustomHashRouter>{state ? <Layout /> : <PageLoading />}</CustomHashRouter>;
+  const {initialState} = useGlobalState();
+  return <CustomHashRouter>{initialState ? <Layout /> : <PageLoading />}</CustomHashRouter>;
 };
 
 export default App;

@@ -11,9 +11,17 @@ export default function access(initialState: any) {
   if (roles.length > 0) {
     hasRoutes = Array.from(new Set(roles.flatMap((x: { privileges: [string] }) => x.privileges)));
   }
+  const codes: Set<string> = new Set(
+    roles.flatMap((item: any) => {
+      return item?.permissions.map((ite: any) => {
+        return ite?.permissionCode;
+      });
+    }),
+  );
 
   return {
     // ...
+    codes,
     canReadFoo: true,
     canUpdateFoo: () => true,
     adminRouteFilter: () => true, // 只有管理员可访问
