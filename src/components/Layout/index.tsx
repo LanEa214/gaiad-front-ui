@@ -9,7 +9,6 @@ import routesConfig from '@/routes';
 import defaulSetting from '@config/defaultSettings';
 import ExceptionContainer from '@components/ExceptionContainer';
 import { useAccessMarkedRoutes } from '@hook/useAccessMarkedRoutes';
-import useGlobalState from '@hook/globalState';
 
 /**
  * 处理路由数据 => Routes，将数据处理成对应的`Route`，但不是跟数据一样嵌套的，这边节点是打平的，
@@ -54,30 +53,27 @@ const App = function App() {
   const location = useLocation();
   const nestedRoutes = useMemo(() => generateRoute(routesConfig), []);
   const realRoutes = useAccessMarkedRoutes(routesConfig);
-  const { initialState } = useGlobalState();
   return (
-    <div key={initialState?.currentUser?.userName}>
-      <ProLayout
-        route={{ routes: realRoutes }}
-        location={location}
-        logo={null}
-        collapsedButtonRender={false}
-        {...defaulSetting}
-        // rightContentRender={() => {
-        //   return <RightContent />;
-        // }}
-        breadcrumbProps={{
-          separator: '>',
-          itemRender: (route: any) => <Link to={route.path}>{route.breadcrumbName}</Link>,
-        }}
-        breadcrumbRender={(routers = []) => [...routers]}
-        menuItemRender={(item: any, dom: any) => <Link to={item.path}>{dom}</Link>}
-      >
-        <Suspense fallback={<PageLoading />}>
-          <Routes>{nestedRoutes}</Routes>
-        </Suspense>
-      </ProLayout>
-    </div>
+    <ProLayout
+      route={{ routes: realRoutes }}
+      location={location}
+      logo={null}
+      collapsedButtonRender={false}
+      {...defaulSetting}
+      // rightContentRender={() => {
+      //   return <RightContent />;
+      // }}
+      breadcrumbProps={{
+        separator: '>',
+        itemRender: (route: any) => <Link to={route.path}>{route.breadcrumbName}</Link>,
+      }}
+      breadcrumbRender={(routers = []) => [...routers]}
+      menuItemRender={(item: any, dom: any) => <Link to={item.path}>{dom}</Link>}
+    >
+      <Suspense fallback={<PageLoading />}>
+        <Routes>{nestedRoutes}</Routes>
+      </Suspense>
+    </ProLayout>
   );
 };
 

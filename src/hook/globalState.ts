@@ -6,6 +6,8 @@ export type IGlobalState = {
   initialState: IInitialState;
   clearUserInfo: () => void;
   getCurrentUser: () => Promise<void>;
+  getUserInfo: () => Promise<any>;
+  setInitialState: React.Dispatch<any>;
 };
 
 export const GlobalContext = React.createContext<IGlobalState | null>(null);

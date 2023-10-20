@@ -19,6 +19,8 @@ const GlobalProvider = ({ children }: PropsWithChildren<any>) => {
           }
           setState({ ...state, currentUser: undefined });
         },
+        getUserInfo,
+        setInitialState: setState,
         // 拉取用户信息
         getCurrentUser: async () => {
           const res = await getUserInfo();

@@ -12,9 +12,14 @@ export const useAccessMarkedRoutes = (routes: IRoute[]) => {
       let accessCode = route.access;
       // 用父级的路由检测父级的 accessCode
       let detectorRoute = route;
-      if (!accessCode && parentAccessCode) {
-        accessCode = parentAccessCode;
-        detectorRoute = parentRoute as IRoute;
+      if (!accessCode) {
+        // 脚手架新建，如果菜单权限只加了authority ，走默认的normalRouteFilter 方法校验
+        if (route?.authority) {
+          accessCode = 'normalRouteFilter';
+        } else {
+          accessCode = parentAccessCode;
+          detectorRoute = parentRoute as IRoute;
+        }
       }
 
       // set default status unaccessible 不可访问 true, 可访问 false proLayout自带处理
@@ -22,7 +27,7 @@ export const useAccessMarkedRoutes = (routes: IRoute[]) => {
 
       // check access code
       if (typeof accessCode === 'string') {
-        const detector = access?.codes?.has(accessCode);
+        const detector = access[accessCode];
 
         if (typeof detector === 'function') {
           route.unaccessible = !detector(detectorRoute);

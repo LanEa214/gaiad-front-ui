@@ -1,5 +1,6 @@
-FROM 10.12.0.78:5000/k8s/busybox:latest
+FROM 10.12.0.78:5000/k8s/nginx:1.20.2-alpine
 
 
+WORKDIR /
 
-COPY dist /home/dist
+COPY dist /usr/share/nginx/html
