@@ -12,7 +12,8 @@
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,json}'",
     "lint:js": "eslint --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --fix --ext .js,.jsx,.ts,.tsx --format=pretty",
-    "lint-staged:js": "eslint . --ext .js,.jsx,.ts,.tsx "
+    "lint-staged:js": "eslint . --ext .js,.jsx,.ts,.tsx ",
+    "submodule": "git submodule init && git submodule sync && git submodule update"
   },
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
