@@ -16,7 +16,6 @@ export default [
     name: '首页',
     // 内部是否有nestRoutes
     isNestRoutes: true,
-    // authority: '权限码'
     component: () => import('@pages/welcome'),
   },
   {

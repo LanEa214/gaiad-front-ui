@@ -66,7 +66,7 @@ export const useAccessMarkedRoutes = (routes: IRoute[]) => {
         }
       }
 
-      return route;
+      return Object.assign({}, route);
     };
 
     return routes.map((route) => process(route));
