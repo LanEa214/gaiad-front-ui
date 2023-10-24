@@ -31,37 +31,35 @@ before_script:
   - git fetch
 
 stages:
-  - lint
+  # - lint
   - build
 
-cache:
-  paths:
-    - .yarn-cache/
-    - node_modules/
+# cache:
+#   paths:
+#     - .yarn-cache/
 
-lint-dev:
-  stage: lint
-  script:
-    - NAME=dev
-    - sed -i "s@\$NPM_URL@$NPM_URL@g" .npmrcs/ci
-    - sed -i "s@\$NODE_SASS_URL@$NODE_SASS_URL@g" .npmrcs/ci
-    - sed -i "s@\$NPM_AUTH@$NPM_AUTH@g" .npmrcs/ci
-    - export NPMRC_STORE=.npmrcs
-    - export NPMRC=.npmrc
-    - time yarn install --frozen-lockfile 
-    - time yarn lint 
-  only:
-    - dev
-    - /^dev-.*$/
-    - /^feature\/\d+\.\d+\.\d+$/
-  tags:
-    - k8s-frontend
+# lint-dev:
+#   stage: lint
+#   script:
+#     - NAME=dev
+#     - sed -i "s@\$NPM_URL@$NPM_URL@g" .npmrcs/ci
+#     - sed -i "s@\$NODE_SASS_URL@$NODE_SASS_URL@g" .npmrcs/ci
+#     - sed -i "s@\$NPM_AUTH@$NPM_AUTH@g" .npmrcs/ci
+#     - export NPMRC_STORE=.npmrcs
+#     - export NPMRC=.npmrc
+#     - time yarn install --frozen-lockfile 
+#     - time yarn lint 
+#   only:
+#     - dev
+#     - /^dev-.*$/
+#     - /^feature\/\d+\.\d+\.\d+$/
+#   tags:
+#     - k8s-frontend
 
 build-dev:
   stage: build
   script:
-    - time yarn install --frozen-lockfile 
-    - time GAIA_COMMIT_INFO=$IMAGE_VERSION yarn run build
+    - time GAIA_COMMIT_INFO=$IMAGE_VERSION yarn run release
 
     - IMAGE=$REGISTRY_URL/$HARBOR_GROUP_NAME-dev/$APP_NAME:$IMAGE_VERSION
     - docker build -f Dockerfile -t $IMAGE . --no-cache
