@@ -19,7 +19,7 @@ before_script:
   - export RELEASE_FLAG=$(echo $CI_BUILD_REF_NAME | grep -c release)
   - export BranchLabel=$([[ $RELEASE_FLAG = 1 ]] && echo ${CI_BUILD_REF_NAME#release*/} || echo $CI_BUILD_REF_NAME)
   - export BASE_VERSION=$(echo $BranchLabel | awk '{sub("\/","-");print$1}')-${CI_COMMIT_SHA:0:7}
-  - export RELEASE_VERSION=$BranchLabel-beta-${CI_COMMIT_SHA:0:7}
+  - export RELEASE_VERSION=$BranchLabel-${CI_COMMIT_SHA:0:7}
   - export IMAGE_VERSION=$([[ ${RELEASE_FLAG} = 1 ]] && echo $RELEASE_VERSION || echo $BASE_VERSION)
   - export HARBOR_GROUP_NAME=${CI_PROJECT_NAMESPACE,,}
   - export APP_NAME=${CI_PROJECT_NAME,,}
@@ -72,8 +72,10 @@ build-dev:
     - GAIA_COMMIT_INFO=$IMAGE_VERSION npm run release | while IFS= read -r line; do printf '%s %s\n' "$(date)" "$line"; done
 
     - IMAGE=$REGISTRY_URL/$HARBOR_GROUP_NAME-dev/$APP_NAME:$IMAGE_VERSION
-    # - ./buildctl --addr tcp://10.99.253.223:1234 build --frontend dockerfile.v0 --local context=. --local dockerfile=./ --output type=image,registry.insecure=true,name=$IMAGE,push=true --allow security.insecure --opt filename=Dockerfile --opt platform=linux/amd64,linux/arm64
+    - time docker build -f Dockerfile -t $IMAGE . --no-cache
+    - time docker push $IMAGE
 
+    - time docker rmi -f $(docker images -q $IMAGE)
   only:
     - dev
     - /^dev-.*$/
@@ -89,10 +91,10 @@ build-release:
     - yarn install
     - npm run build
     - IMAGE=$REGISTRY_URL/$HARBOR_GROUP_NAME-release-$BranchLabel/$APP_NAME:$IMAGE_VERSION
-    - ./buildctl --addr tcp://10.99.253.223:1234 build --frontend dockerfile.v0 --local context=. --local dockerfile=./ --output type=image,registry.insecure=true,name=$IMAGE,push=true --allow security.insecure --opt filename=Dockerfile --opt platform=linux/amd64,linux/arm64
-
+    - docker build -f Dockerfile -t $IMAGE . --no-cache
+    - docker push $IMAGE
   only:
-    - /^release\/\d+\.\d+\.\d+$/
-    - /^release\/\d+\.\d+\.\d+\.\d+$/
+    - /^release\//
+    - /^release\//
   tags:
     - k8s-frontend
