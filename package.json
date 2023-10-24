@@ -12,7 +12,7 @@
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,json}'",
     "lint:js": "eslint --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --fix --ext .js,.jsx,.ts,.tsx --format=pretty",
-    "lint-staged:js": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-path src/be-common ",
+    "lint-staged:js": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-pattern src/be-common ",
     "submodule": "git submodule init && git submodule sync && git submodule update"
   },
   "dependencies": {
