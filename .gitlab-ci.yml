@@ -51,9 +51,8 @@ lint-dev:
     - sed -i "s@\$NPM_AUTH@$NPM_AUTH@g" .npmrcs/ci
     - export NPMRC_STORE=.npmrcs
     - export NPMRC=.npmrc
-    - npm install -g yarn
     - yarn install | while IFS= read -r line; do printf '%s %s\n' "$(date)" "$line"; done
-    - npm run lint | while IFS= read -r line; do printf '%s %s\n' "$(date)" "$line"; done
+    - yarn lint | while IFS= read -r line; do printf '%s %s\n' "$(date)" "$line"; done
   only:
     - dev
     - /^dev-.*$/
@@ -86,9 +85,7 @@ build-dev:
 build-release:
   stage: build
   script:
-    - npm install -g yarn
-    - yarn install
-    - npm run build
+    - yarn release
     - IMAGE=$REGISTRY_URL/$HARBOR_GROUP_NAME-release-$BranchLabel/$APP_NAME:$IMAGE_VERSION
     - docker build -f Dockerfile -t $IMAGE . --no-cache
     - docker push $IMAGE
