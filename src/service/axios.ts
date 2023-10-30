@@ -75,7 +75,9 @@ export function request(url: string, config?: RequestConfig): Promise<any> {
   return new Promise((resolve, reject) => {
     axios({ url, ...config })
       .then((res) => {
-        resolve(config?.getResponse ? res : res.data);
+        // resolve(config?.getResponse ? res : res.data);
+        /* 兼容不同的返回 */
+        resolve(config?.getResponse ? res : res.data?.content ?? res.data?.data);
       })
       .catch((errorRes) => {
         if (!config?.skipErrorHandle) {
