@@ -8,8 +8,7 @@ import { isInWhiteList, onTokenInvalid } from '@utils/utils';
 async function initTenantInfo() {
   let data;
   try {
-    const res = await getVerifyConfig();
-    data = res.data;
+    data = await getVerifyConfig();
     // eslint-disable-next-line no-empty
   } catch (e) {}
   if (!data) {
