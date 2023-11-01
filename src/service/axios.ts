@@ -1,9 +1,9 @@
 import { message } from 'antd';
 import axios from 'axios';
-import Cookie from 'js-cookie';
 import type { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { KEY_TOKEN, DEFAULT_ERROR_MESSAGE, RESPONSE_SUCCESS_CODES } from '@common/constant';
-import { getToken, onTokenInvalid } from '@utils/utils';
+import { DEFAULT_ERROR_MESSAGE, RESPONSE_SUCCESS_CODES } from '@common/constant';
+import { onTokenInvalid } from '@utils/utils';
+import { getSystemToken } from '@/be-common/src/utils';
 
 // axios 文档 https://axios-http.com/zh/docs/req_config
 
@@ -33,8 +33,9 @@ const isSuccess = (code: string | number): boolean => {
 
 axios.interceptors.request.use(
   (config) => {
-    if (Cookie.get(KEY_TOKEN)) {
-      config.headers.Authorization = config.headers.Authorization || getToken();
+    const token = getSystemToken();
+    if (token) {
+      config.headers.Authorization = token;
     }
     return config;
   },
