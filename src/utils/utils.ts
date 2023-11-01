@@ -32,3 +32,69 @@ export const onTokenInvalid = (needClear = true) => {
   }
   // and then go to login add your custom code here
 };
+
+const getFirstAuthRoutePath: any = (route: any, judgeCallback: (param: any) => boolean) => {
+  if (Array.isArray(route) && route.length) {
+    for (let i = 0; i < route.length; i++) {
+      if (!route[i]?.redirect) {
+        // 有权限码控的话，默认字段是authority，判断条件自定义
+        if (route[i]?.authority) {
+          if (judgeCallback(route[i])) {
+            if (route[i]?.children?.length) {
+              return getFirstAuthRoutePath(route[i]?.children, judgeCallback);
+            } else {
+              return route[i].path;
+            }
+          }
+        } else {
+          if (route[i]?.children?.length) {
+            return getFirstAuthRoutePath(route[i]?.children, judgeCallback);
+          } else {
+            return route[i].path;
+          }
+        }
+      }
+    }
+  } else {
+    return route?.path || '/404';
+  }
+};
+
+/**
+ * 渲染菜单部分的路由
+ * @param routeArray
+ * @param judgeCallback
+ * @returns
+ */
+export const routeRedirect: any = (routeArray: any[], judgeCallback: (param: any) => boolean) => {
+  if (Array.isArray(routeArray) && routeArray.length) {
+    let hasRedirect = routeArray.some((route: any) => route?.redirect);
+    return routeArray
+      .map((route: any) => {
+        // 面包屑是根据path的/来分割的，所以如果root跟子路由的path相同的话，面包屑会消失
+        if (hasRedirect && route?.redirect) {
+          // 找到第一个有权限的子路由，动态添加
+          route.redirect = getFirstAuthRoutePath(routeArray, judgeCallback);
+        } else if (!hasRedirect) {
+          hasRedirect = true;
+          routeArray.push({
+            path: '.',
+            redirect: getFirstAuthRoutePath(routeArray, judgeCallback),
+          });
+        }
+
+        // 有子菜单的部分
+        if (Array.isArray(route?.children) && route?.children?.length) {
+          return {
+            ...route,
+            children: routeRedirect(route?.children, judgeCallback),
+          };
+        } else {
+          return route;
+        }
+      })
+      .filter((ite: any) => ite);
+  } else {
+    return [];
+  }
+};
