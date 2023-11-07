@@ -36,8 +36,12 @@ export const onTokenInvalid = (needClear = true) => {
 const getFirstAuthRoutePath: any = (route: any, judgeCallback: (param: any) => boolean) => {
   if (Array.isArray(route) && route.length) {
     for (let i = 0; i < route.length; i++) {
-      if (!route[i]?.redirect) {
-        // 有权限码控的话，默认字段是authority，判断条件自定义
+      // if (Array.isArray(route[i]?.children) && route[i]?.children?.length) {
+      //   return getFirstAuthRoutePath(route[i]?.children)
+      // }
+      // eslint-disable-next-line no-prototype-builtins
+      if (!route[i]?.hasOwnProperty('redirect') && !route[i]?.name?.startsWith('ROUTERDIRECT')) {
+        // 有权限码控的话
         if (route[i]?.authority) {
           if (judgeCallback(route[i])) {
             if (route[i]?.children?.length) {
@@ -60,39 +64,50 @@ const getFirstAuthRoutePath: any = (route: any, judgeCallback: (param: any) => b
   }
 };
 
-/**
- * 渲染菜单部分的路由
- * @param routeArray
- * @param judgeCallback
- * @returns
- */
-export const routeRedirect: any = (routeArray: any[], judgeCallback: (param: any) => boolean) => {
+// 渲染菜单部分的路由
+export const routeRedirect: any = (
+  routeArray: any[],
+  judgeCallback: (param: any) => boolean,
+  parentRootPath?: string,
+) => {
   if (Array.isArray(routeArray) && routeArray.length) {
     let hasRedirect = routeArray.some((route: any) => route?.redirect);
     return routeArray
-      .map((route: any) => {
+      .reduce((acc: any, cur: any) => {
         // 面包屑是根据path的/来分割的，所以如果root跟子路由的path相同的话，面包屑会消失
-        if (hasRedirect && route?.redirect) {
+        if (hasRedirect && cur?.redirect) {
           // 找到第一个有权限的子路由，动态添加
-          route.redirect = getFirstAuthRoutePath(routeArray, judgeCallback);
+          cur.redirect = getFirstAuthRoutePath(routeArray, judgeCallback);
+          acc.push(cur);
+          return acc;
         } else if (!hasRedirect) {
           hasRedirect = true;
-          routeArray.push({
-            path: '.',
+          // 此条路由是新加入的，需要继续往下走
+          acc.push({
+            path: parentRootPath ? `${parentRootPath}/.` : '.',
             redirect: getFirstAuthRoutePath(routeArray, judgeCallback),
           });
         }
 
         // 有子菜单的部分
-        if (Array.isArray(route?.children) && route?.children?.length) {
-          return {
-            ...route,
-            children: routeRedirect(route?.children, judgeCallback),
-          };
+        if (Array.isArray(cur?.children) && cur?.children?.length) {
+          acc.push({
+            ...cur,
+            children: routeRedirect(cur?.children, judgeCallback, cur?.path),
+            routes: routeRedirect(cur?.children, judgeCallback, cur?.path),
+            // 解决menuItemRender跳转的问题
+            routeRedirect: getFirstAuthRoutePath(cur?.children, judgeCallback),
+          });
         } else {
-          return route;
+          acc.push({
+            ...cur,
+            // 解决menuItemRender填补子菜单没有这个属性的问题
+            routeRedirect: undefined,
+          });
         }
-      })
+
+        return acc;
+      }, [])
       .filter((ite: any) => ite);
   } else {
     return [];
