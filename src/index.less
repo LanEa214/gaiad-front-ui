@@ -76,3 +76,19 @@ ol {
 //     min-height: 100vh;
 //   }
 // }
+
+
+@keyframes fade-in-out {
+  0% {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.fade-in-out {
+  animation: fade-in-out .5s;
+}

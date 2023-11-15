@@ -17,7 +17,6 @@ const Settings: ProLayoutProps & {
   extraConfig?: any;
   uiConfig?: any;
   apiPrefix: string;
-  resPrefix: string;
   key?: string;
   tenantInfo: Record<string, any>;
 } = {
@@ -33,11 +32,10 @@ const Settings: ProLayoutProps & {
   title: 'GAIA',
   collapsed: false,
   // logo: '',
-  iconfontUrl: `${VITE_PUBLIC_RES_PATH}/iconfont/iconfont.js`,
+  iconfontUrl: `${PUBLIC_RESOURCE_STATIC_PATH}iconfont/iconfont.js`,
   tenantInfo: DEFAULT_TENANT_INFO,
   enableCustomTheme: true,
   apiPrefix: VITE_PUBLIC_API_PATH,
-  resPrefix: VITE_PUBLIC_RES_PATH,
   endpoint: {},
   extraInfo: {},
 };

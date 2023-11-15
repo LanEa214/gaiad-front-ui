@@ -9,6 +9,7 @@ import routesConfig from '@/routes';
 import defaulSetting from '@config/defaultSettings';
 import ExceptionContainer from '@components/ExceptionContainer';
 import { useAccessMarkedRoutes } from '@hook/useAccessMarkedRoutes';
+import withFadeAnimation from '@components/AnimationContainer';
 
 /**
  * 处理路由数据 => Routes，将数据处理成对应的`Route`，但不是跟数据一样嵌套的，这边节点是打平的，
@@ -33,7 +34,8 @@ function generateRoute(routeData: MenuDataItem[], cacheRoutes: any[] = []) {
         />,
       );
     } else {
-      const Component = getComponent && React.lazy(() => getComponent());
+      // 添加动画
+      const Component = withFadeAnimation(getComponent && React.lazy(() => getComponent()));
       // 渲染正常的Route
       cacheRoutes.push(
         <Route

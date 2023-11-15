@@ -1,6 +1,9 @@
 import type { MenuDataItem } from '@ant-design/pro-components';
 
 import routes from './routes';
+import { createElement } from 'react';
+
+import * as IconMap from '@ant-design/icons';
 
 /**
  *
@@ -21,14 +24,16 @@ function handleRoutes(routeData: MenuDataItem[], paranentRoute?: MenuDataItem): 
   if (!routeData) return [];
   const position = paranentRoute?.position || [];
   return routeData.map((route: MenuDataItem) => {
-    const { path, name, ...rest } = route;
+    const { path, name, icon, ...rest } = route;
     const realPath: string = relativeToAbsoutePath(paranentRoute?.path || '/', path);
     const currentPosition = position.concat([{ path: realPath, breadcrumbName: name }]);
+    const NewIcon = (IconMap as any)[icon as string];
 
     const newRouteData = {
       ...rest,
       path: realPath,
       name,
+      icon: NewIcon ? createElement(NewIcon) : icon,
       position: currentPosition,
       children: handleRoutes(rest?.routes || rest?.children, {
         position: currentPosition,

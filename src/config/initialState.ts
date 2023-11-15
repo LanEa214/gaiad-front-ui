@@ -4,6 +4,7 @@ import { message } from 'antd';
 import favicon from '@assets/image/favicon.png';
 import { history } from '@utils/umi';
 import { isInWhiteList, onTokenInvalid } from '@utils/utils';
+import { setFrontConfig } from '@/be-common/src/utils';
 
 async function initTenantInfo() {
   let data;
@@ -42,12 +43,10 @@ async function initTenantInfo() {
   link.href = href;
   document.getElementsByTagName('head')[0].appendChild(link);
   // 将ico配置到缓存内，提供给doc，解决私有化ico不一致的问题
-  window.localStorage.setItem(
-    'frontConfig',
-    JSON.stringify({
-      icoUrl: href,
-    }),
-  );
+  setFrontConfig({
+    icoUrl: href,
+    urlConfig: urlConfig,
+  });
 }
 
 export type IInitialState = {

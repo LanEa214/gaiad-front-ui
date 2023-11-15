@@ -14,6 +14,7 @@ export default [
   {
     path: '/welcome',
     name: '首页',
+    icon: 'HomeOutlined',
     // 内部是否有nestRoutes
     isNestRoutes: true,
     component: () => import('@pages/welcome'),
@@ -48,7 +49,7 @@ export default [
             // 绝对路径
             path: 'sub-page2',
             name: 'sub-page2',
-            component: () => import('@pages/demo/index'),
+            component: () => import('@pages/demo/sub-page2'),
           },
           {
             path: '/sub-page3',
