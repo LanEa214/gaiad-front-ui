@@ -9,7 +9,7 @@ import routesConfig from '@/routes';
 import defaulSetting from '@config/defaultSettings';
 import ExceptionContainer from '@components/ExceptionContainer';
 import { useAccessMarkedRoutes } from '@hook/useAccessMarkedRoutes';
-import withFadeAnimation from '@components/AnimationContainer';
+import withFadeAnimation from '@/be-common/src/components/AnimationContainer';
 
 /**
  * 处理路由数据 => Routes，将数据处理成对应的`Route`，但不是跟数据一样嵌套的，这边节点是打平的，
