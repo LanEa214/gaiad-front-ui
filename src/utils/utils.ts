@@ -36,9 +36,6 @@ export const onTokenInvalid = (needClear = true) => {
 const getFirstAuthRoutePath: any = (route: any, judgeCallback: (param: any) => boolean) => {
   if (Array.isArray(route) && route.length) {
     for (let i = 0; i < route.length; i++) {
-      // if (Array.isArray(route[i]?.children) && route[i]?.children?.length) {
-      //   return getFirstAuthRoutePath(route[i]?.children)
-      // }
       // eslint-disable-next-line no-prototype-builtins
       if (!route[i]?.hasOwnProperty('redirect') && !route[i]?.name?.startsWith('ROUTERDIRECT')) {
         // 有权限码控的话

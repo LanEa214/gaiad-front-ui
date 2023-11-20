@@ -1,7 +1,8 @@
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { defineConfig, loadEnv } from 'vite';
-// import vitePluginImp from 'vite-plugin-imp';
+import vitePluginImp from 'vite-plugin-imp';
+import glob from 'glob';
 
 import proxyConfig from './config/proxy';
 import projectConfig from './config/config';
@@ -11,6 +12,11 @@ const packageInfo = require('./package.json');
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
+    optimizeDeps: {
+      include: glob
+        .sync('node_modules/antd/es/*/style', 'node_modules/@ant-design')
+        .map((path: string) => path.replace('node_modules/', '')),
+    },
     plugins: [
       react({
         babel: {
@@ -20,14 +26,14 @@ export default defineConfig(({ mode }) => {
         },
       }),
 
-      // vitePluginImp({
-      //   libList: [
-      //     {
-      //       libName: 'antd',
-      //       style: (name) => `antd/es/${name}/style`,
-      //     },
-      //   ],
-      // }),
+      vitePluginImp({
+        libList: [
+          {
+            libName: 'antd',
+            style: (name) => `antd/es/${name}/style`,
+          },
+        ],
+      }),
     ],
     resolve: {
       alias: {
