@@ -13,6 +13,8 @@ import App from './App';
 
 import './index.less';
 
+// import 'antd/dist/antd.less'
+
 moment.locale('en');
 
 const Main = () => {
