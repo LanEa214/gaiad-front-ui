@@ -10,6 +10,7 @@ import defaulSetting from '@config/defaultSettings';
 import ExceptionContainer from '@components/ExceptionContainer';
 import { useAccessMarkedRoutes } from '@hook/useAccessMarkedRoutes';
 import withFadeAnimation from '@/be-common/src/components/AnimationContainer';
+import ChunksErrorBoundary from './ChunksErrorBoundary';
 
 /**
  * 处理路由数据 => Routes，将数据处理成对应的`Route`，但不是跟数据一样嵌套的，这边节点是打平的，
@@ -71,6 +72,7 @@ const App = function App() {
       }}
       breadcrumbRender={(routers = []) => [...routers]}
       menuItemRender={(item: any, dom: any) => <Link to={item.path}>{dom}</Link>}
+      ErrorBoundary={ChunksErrorBoundary}
     >
       <Suspense fallback={<PageLoading />}>
         <Routes>{nestedRoutes}</Routes>
