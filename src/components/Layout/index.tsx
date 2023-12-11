@@ -11,6 +11,8 @@ import ExceptionContainer from '@components/ExceptionContainer';
 import { useAccessMarkedRoutes } from '@hook/useAccessMarkedRoutes';
 import withFadeAnimation from '@/be-common/src/components/AnimationContainer';
 import ChunksErrorBoundary from './ChunksErrorBoundary';
+import { history } from '@utils/umi';
+import { routeRedirect } from '@utils/utils';
 
 /**
  * 处理路由数据 => Routes，将数据处理成对应的`Route`，但不是跟数据一样嵌套的，这边节点是打平的，
@@ -52,10 +54,31 @@ function generateRoute(routeData: MenuDataItem[], cacheRoutes: any[] = []) {
   return cacheRoutes;
 }
 
+const getRedirectList = (routeArray: any[]) => {
+  if (Array.isArray(routeArray) && routeArray?.length) {
+    return routeArray.reduce((acc: any, cur: any) => {
+      if (cur?.routeRedirect) {
+        acc.push(cur);
+      }
+      if (Array.isArray(cur?.children) && cur?.children?.length) {
+        acc.push(getRedirectList(cur?.children));
+      }
+      return acc;
+    }, []);
+  }
+  return [];
+};
+
 const App = function App() {
   const location = useLocation();
   const nestedRoutes = useMemo(() => generateRoute(routesConfig), []);
-  const realRoutes = useAccessMarkedRoutes(routesConfig);
+  // 是否自定义生成redirect，开启之后默认寻找第一个当前大菜单下第一个有权限的菜单
+  const showRedirect = true;
+  // () => true 为自定义过滤函数部分，例如：(route: any) => access?.normalRouteFilter(route)
+  const realRoutes = routeRedirect(useAccessMarkedRoutes(routesConfig), () => true);
+
+  const routeList = getRedirectList(realRoutes).flat(+Infinity);
+
   return (
     <ProLayout
       route={{ routes: realRoutes }}
@@ -68,10 +91,41 @@ const App = function App() {
       // }}
       breadcrumbProps={{
         separator: '>',
-        itemRender: (route: any) => <Link to={route.path}>{route.breadcrumbName}</Link>,
+        itemRender: (route: any) => {
+          if (showRedirect) {
+            return (
+              <Link
+                to={
+                  routeList?.find((item: any) => item.path === route.path)?.routeRedirect ||
+                  route.path
+                }
+              >
+                {route.breadcrumbName}
+              </Link>
+            );
+          }
+          return <Link to={route.path}>{route.breadcrumbName}</Link>;
+        },
       }}
       breadcrumbRender={(routers = []) => [...routers]}
-      menuItemRender={(item: any, dom: any) => <Link to={item.path}>{dom}</Link>}
+      menuItemRender={(item: any, dom: any) => {
+        if (showRedirect) {
+          return (
+            <a
+              onClick={() => {
+                if (item?.routeRedirect) {
+                  history.push(item?.routeRedirect || '/welcome');
+                } else {
+                  history.push(item.path || '/welcome');
+                }
+              }}
+            >
+              {dom}
+            </a>
+          );
+        }
+        return <Link to={item.path}>{dom}</Link>;
+      }}
       ErrorBoundary={ChunksErrorBoundary}
     >
       <Suspense fallback={<PageLoading />}>
