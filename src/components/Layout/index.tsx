@@ -13,6 +13,7 @@ import withFadeAnimation from '@/be-common/src/components/AnimationContainer';
 import ChunksErrorBoundary from './ChunksErrorBoundary';
 import { history } from '@utils/umi';
 import { routeRedirect } from '@utils/utils';
+import { getUrlParams } from '@/be-common/src/utils';
 
 /**
  * 处理路由数据 => Routes，将数据处理成对应的`Route`，但不是跟数据一样嵌套的，这边节点是打平的，
@@ -78,11 +79,14 @@ const App = function App() {
   const realRoutes = routeRedirect(useAccessMarkedRoutes(routesConfig), () => true);
 
   const routeList = getRedirectList(realRoutes).flat(+Infinity);
+  const urlParams = getUrlParams();
 
   return (
     <ProLayout
       route={{ routes: realRoutes }}
       location={location}
+      headerHeight={urlParams.get('header') ? 0 : 72}
+      siderWidth={urlParams.get('sider') ? 0 : 208}
       logo={null}
       collapsedButtonRender={false}
       {...defaulSetting}
@@ -107,7 +111,12 @@ const App = function App() {
           return <Link to={route.path}>{route.breadcrumbName}</Link>;
         },
       }}
-      breadcrumbRender={(routers = []) => [...routers]}
+      breadcrumbRender={(routers = []) => {
+        if (urlParams.get('breadcrumb')) {
+          return [];
+        }
+        return [...routers];
+      }}
       menuItemRender={(item: any, dom: any) => {
         if (showRedirect) {
           return (
