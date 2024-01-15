@@ -7,7 +7,7 @@ import { Link, useLocation } from '@utils/umi';
 const App1 = () => {
   return (
     <>
-      <ProCard title="标题1" headerBordered>
+      <ProCard className="text-3xl font-bold underline" title="标题1" headerBordered>
         welcome1
         <div onClick={() => console.log(null, 1, 2, 3)}></div>
       </ProCard>
